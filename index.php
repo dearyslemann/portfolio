@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="freelancer.png">
+    <title>Deary Sleman - Full Stack Developer</title>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.cdnfonts.com/css/rudaw" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                        rudaw: ['Rudaw', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#00ff9d',   /* Neon Green */
+                        secondary: '#2563eb', /* Deep Electric Blue */
+                        dark: '#020617',      /* Deepest Navy/Black */
+                        glass: 'rgba(2, 6, 23, 0.7)',
+                        glassBorder: 'rgba(0, 255, 157, 0.1)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            'from': { boxShadow: '0 0 10px #00ff9d, 0 0 20px #00ff9d' },
+                            'to': { boxShadow: '0 0 20px #00ff9d, 0 0 30px #00ff9d' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #00ff9d, #2563eb);
+            border-radius: 5px;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 157, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(37, 99, 235, 0.4);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Neon Glows */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #00ff9d, #2563eb, #00ff9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: gradientMove 5s linear infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* 3D Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: #00ff9d;
+            transition: width 0.3s;
+            box-shadow: 0 0 10px #00ff9d;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Timeline Connector Line */
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: linear-gradient(to bottom, #00ff9d, #2563eb);
+            transform: translateX(-50%);
+            z-index: -1;
+            opacity: 0.3;
+        }
+        @media (max-width: 768px) {
+            .timeline-line::before {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- 3D Background Container -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 top-0" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="#" class="font-rudaw text-2xl font-bold gradient-text tracking-wider">
+                        DEARY SLEMAN
+                    </a>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+                        <a href="#about" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+                        <a href="#skills" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Skills</a>
+                        <a href="#experience" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Experience</a>
+                        <a href="#projects" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
+                        <a href="#contact" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button type="button" onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu Panel -->
+        <div class="md:hidden hidden glass-panel absolute w-full" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#about" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#skills" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Skills</a>
+                <a href="#experience" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Experience</a>
+                <a href="#projects" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Projects</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="min-h-screen flex items-center justify-center relative pt-20">
+            <!-- Decorative Glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse-slow"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between w-full">
+                <div class="md:w-1/2 text-center md:text-left z-10 hero-content">
+                    <div class="inline-block px-4 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
+                        &lt;Welcome/&gt;
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 font-rudaw leading-tight">
+                        Hi, I'm <br>
+                        <span class="gradient-text text-glow">Deary Sleman</span>
+                    </h1>
+                    <h2 class="text-2xl md:text-3xl text-gray-300 mb-8 font-light">
+                        Full Stack Developer 
+                    </h2>
+                    <p class="text-gray-400 text-lg mb-10 max-w-lg mx-auto md:mx-0 leading-relaxed font-mono text-sm md:text-base">
+                        // Crafting immersive digital experiences.<br>
+                        // Turning coffee into code and ideas into reality.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <a href="#projects" class="px-8 py-4 rounded-full bg-gradient-to-r from-primary to-secondary text-white font-bold shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] transition-all transform hover:-translate-y-1">
+                            View Work
+                        </a>
+                        <a href="#contact" class="px-8 py-4 rounded-full border border-white/20 bg-white/5 text-white font-semibold backdrop-blur-sm hover:bg-white/10 hover:border-primary/50 transition-all transform hover:-translate-y-1">
+                            Contact Me
+                        </a>
+                    </div>
+                    
+                    <div class="mt-12 flex items-center justify-center md:justify-start space-x-6">
+                        <a href="https://wa.me/9647708473777" class="text-gray-400 hover:text-white transition-colors text-2xl hover:scale-110 transform duration-200"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.linkedin.com/in/deary-sleman-8a5694378/" class="text-gray-400 hover:text-primary transition-colors text-2xl hover:scale-110 transform duration-200"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61581595387599" class="text-gray-400 hover:text-white transition-colors text-2xl hover:scale-110 transform duration-200"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/air.soft__?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="text-gray-400 hover:text-secondary transition-colors text-2xl hover:scale-110 transform duration-200"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <!-- 3D Placeholder / Hero Image area -->
+                <div class="md:w-1/2 mt-12 md:mt-0 relative h-[400px] flex items-center justify-center perspective-container">
+                    <div class="glass-card p-6 rounded-2xl w-64 md:w-80 h-auto absolute animate-float border-t border-l border-white/10 bg-black/40">
+                        <div class="flex items-center space-x-4 mb-4 border-b border-white/10 pb-4">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <div class="text-xs text-gray-500 font-mono">dev.php</div>
+                        </div>
+                        <div class="space-y-3 font-mono text-xs md:text-sm text-gray-300">
+                            <div class="flex"><span class="text-secondary mr-2">const</span> <span class="text-primary">developer</span> = {</div>
+                            <div class="pl-4">name: <span class="text-green-400">'Deary'</span>,</div>
+                            <div class="pl-4">role: <span class="text-green-400">'Full Stack'</span>,</div>
+                            <div class="pl-4">status: <span class="text-secondary">'Online'</span></div>
+                            <div>};</div>
+                            <div class="text-gray-500 pt-2">// Ready to deploy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <a href="#about" class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gray-500 hover:text-primary transition-colors">
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </a>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-panel rounded-3xl p-8 md:p-12 border border-white/5">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="relative group">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
+                            <div class="relative w-full aspect-square rounded-2xl overflow-hidden bg-gray-900 border border-white/10">
+                                <!-- Placeholder for your image -->
+                                <img src="ID.jpg" alt="Deary Sleman" class="object-cover w-full h-full opacity-80 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0">
+                                <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
+                                <div class="absolute bottom-6 left-6">
+                                    <h3 class="text-2xl font-bold text-white font-rudaw">Deary Sleman</h3>
+                                    <p class="text-primary font-mono text-sm">&lt;Coder/&gt;</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gsap-reveal">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white font-rudaw">About <span class="text-primary">Me</span></h2>
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                I am a passionate Full Stack Developer with a knack for creating seamless, user-centric web applications. 
+                                My journey in tech is driven by curiosity and a desire to solve complex problems with elegant code.
+                            </p>
+                            <p class="text-gray-300 mb-8 leading-relaxed">
+                                Whether it's architecting a robust backend or designing a fluid frontend, I bring dedication and 
+                                creativity to every project. I believe in continuous learning and staying ahead of modern web trends.
+                            </p>
+                            <div class="grid grid-cols-2 gap-6 font-mono">
+                                <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                                    <h4 class="text-xl font-bold text-secondary mb-1">1+</h4>
+                                    <p class="text-xs text-gray-400">Years Experience</p>
+                                </div>
+                                <div class="p-4 bg-white/5 rounded-xl border border-white/5">
+                                    <h4 class="text-xl font-bold text-secondary mb-1">10+</h4>
+                                    <p class="text-xs text-gray-400">Projects Completed</p>
+                                </div>
+                                <br>
+                            </div>
+                            <div style="text-align: center;"class="px-8 py-4 rounded-full border border-white/20 bg-white/5 text-white font-semibold backdrop-blur-sm hover:bg-white/10 hover:border-primary/50 transition-all transform hover:-translate-y-1">
+                                  <a href="CV.pdf" class="btn btn-secondary">
+                            <i class="fas fa-download"></i> <span class="translate" data-key="downloadCV">Download CV</span>
+                        </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 gsap-reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-rudaw">My <span class="text-secondary">Expertise</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">Specialized in building digital solutions from the ground up.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Card 1: Frontend -->
+                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                        <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-code text-2xl text-primary transition-colors"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4 font-rudaw transition-colors">Frontend Development</h3>
+                        <p class="text-gray-400 leading-relaxed group-hover:text-gray-300">
+                            Crafting responsive, modern, and user-friendly interfaces using the latest web technologies.
+                        </p>
+                    </div>
+
+                    <!-- Card 2: Backend -->
+                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                        <div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-server text-2xl text-secondary transition-colors"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4 font-rudaw transition-colors">Backend Development</h3>
+                        <p class="text-gray-400 leading-relaxed group-hover:text-gray-300">
+                            Powering website with strong architecture, optimized performance, and seamless data management.
+                        </p>
+                    </div>
+
+                    <!-- Card 3: Database -->
+                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                        <div class="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-database text-2xl text-blue-400 transition-colors"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4 font-rudaw transition-colors">Database & Storage</h3>
+                        <p class="text-gray-400 leading-relaxed group-hover:text-gray-300">
+                            Organizing data into powerful systems that keep applications fast, secure, and future-ready.
+                        </p>
+                    </div>
+
+                    <!-- Card 4: Research -->
+                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                        <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-file-alt text-2xl text-yellow-400 transition-colors"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4 font-rudaw transition-colors">Research & Report</h3>
+                        <p class="text-gray-400 leading-relaxed group-hover:text-gray-300">
+                            Skilled in writing academic, technical, and business reports as well as designing engaging presentations that effectively communicate ideas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Professional Experience Section -->
+        <section id="experience" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 gsap-reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-rudaw">Professional <span class="text-primary">Experience</span></h2>
+                    <p class="text-gray-400">My professional journey and career milestones.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Item 1: Internship -->
+                    <div class="glass-card p-8 rounded-2xl relative border border-white/5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col gsap-reveal">
+                        <!-- Date Badge -->
+                        <span class="absolute top-0 right-0 px-4 py-2 bg-primary/10 text-primary border-b border-l border-primary/20 rounded-bl-xl rounded-tr-xl font-mono text-sm font-bold">2025</span>
+                        
+                        <h3 class="text-2xl font-bold text-white mb-2 font-rudaw">Internship</h3>
+                        <h4 class="text-secondary font-mono text-sm mb-6 flex items-center gap-2">
+                            <i class="fas fa-university"></i> Raparin Technical and Vocational Institute
+                        </h4>
+                        
+                        <ul class="space-y-3 text-gray-300 text-sm md:text-base list-none flex-grow">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-caret-right text-primary mt-1"></i>
+                                <span>Website Development</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-caret-right text-primary mt-1"></i>
+                                <span>Network & Router Maintenance</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-caret-right text-primary mt-1"></i>
+                                <span>Student and Staff Technical Support</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-caret-right text-primary mt-1"></i>
+                                <span>IT Infrastructure Support</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-caret-right text-primary mt-1"></i>
+                                <span>Collaboration and Problem Solving</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Item 2: Freelance -->
+                    <div class="glass-card p-8 rounded-2xl relative border border-white/5 hover:border-secondary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col gsap-reveal">
+                        <!-- Date Badge -->
+                        <span class="absolute top-0 right-0 px-4 py-2 bg-secondary/10 text-secondary border-b border-l border-secondary/20 rounded-bl-xl rounded-tr-xl font-mono text-sm font-bold">2025 - Present</span>
+                        
+                        <h3 class="text-2xl font-bold text-white mb-2 font-rudaw">Full Stack Web Developer</h3>
+                        <h4 class="text-secondary font-mono text-sm mb-6 flex items-center gap-2">
+                            <i class="fas fa-laptop-code"></i> Freelance
+                        </h4>
+                        
+                        <p class="text-gray-300 leading-relaxed text-sm md:text-base border-l-2 border-secondary/50 pl-4 flex-grow">
+                            Providing web development and digital solutions to clients on a project basis, delivering high-quality, efficient, and customized results. Skilled in managing end-to-end projects independently, ensuring timely delivery and client satisfaction.
+                        </p>
+                    </div>
+
+                    <!-- Item 3: Content Specialist (Centered) -->
+                    <div class="glass-card p-8 rounded-2xl relative border border-white/5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col md:col-span-2 md:w-2/3 md:mx-auto gsap-reveal">
+                        <!-- Date Badge -->
+                        <span class="absolute top-0 right-0 px-4 py-2 bg-primary/10 text-primary border-b border-l border-primary/20 rounded-bl-xl rounded-tr-xl font-mono text-sm font-bold">2025 - Present</span>
+                        
+                        <h3 class="text-2xl font-bold text-white mb-2 font-rudaw">Digital Content Specialist</h3>
+                        <h4 class="text-secondary font-mono text-sm mb-6 flex items-center gap-2">
+                            <i class="fas fa-print"></i> Qaradaxi Printing House
+                        </h4>
+                        
+                        <div class="grid sm:grid-cols-2 gap-4 flex-grow">
+                            <ul class="space-y-3 text-gray-300 text-sm md:text-base list-none">
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-caret-right text-primary mt-1"></i>
+                                    <span>Report & Research Writing</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-caret-right text-primary mt-1"></i>
+                                    <span>Presentation Design</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-caret-right text-primary mt-1"></i>
+                                    <span>Lecture Printing</span>
+                                </li>
+                            </ul>
+                            <ul class="space-y-3 text-gray-300 text-sm md:text-base list-none">
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-caret-right text-primary mt-1"></i>
+                                    <span>Content Management</span>
+                                </li>
+                                 <li class="flex items-start gap-3">
+                                    <i class="fas fa-caret-right text-primary mt-1"></i>
+                                    <span>Client Consultation</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-20 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 gsap-reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-rudaw">Featured <span class="text-primary">Projects</span></h2>
+                    <p class="text-gray-400">A selection of my recent work.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Project Card 1 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_30px_rgba(0,255,157,0.2)] transition-all duration-500 gsap-reveal">
+                        <div class="h-48 bg-gray-900 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-80 z-10"></div>
+                            <!-- Replace src with your project image -->
+                            <img src="candle.png" alt="Project 1" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 relative z-20">
+                            <h3 class="text-xl font-bold text-white mb-2 font-rudaw">E-Commerce Platform</h3>
+                            <p class="text-gray-400 text-sm mb-4">Candle Motivation Developed an e-commerce web platform for Candle Motivation, a stationery and motivational products store. Designed with a focus on clean aesthetics and intuitive navigation, the site allows users to browse products, view detailed descriptions, and complete purchases seamlessly. Implemented responsive design to ensure functionality across desktop and mobile devices. Integrated secure checkout and product showcase features to enhance the shopping experience. The project is fully live and optimized for user engagement.</p>
+                            <div class="flex flex-wrap gap-2 mb-6 font-mono">
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Secure</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Responsive</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">User-Friendly</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Hidden Admin Pnael</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">E-Commerce</span>
+                                
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <a href="https://candle-motivation.com/" class="text-white hover:text-secondary transition-colors text-sm font-semibold flex items-center gap-2">
+                                    Live Demo <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 2 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_30px_rgba(37,99,235,0.2)] transition-all duration-500 gsap-reveal">
+                        <div class="h-48 bg-gray-900 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-80 z-10"></div>
+                            <img src="netherton.png" alt="Project 2" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 relative z-20">
+                            <h3 class="text-xl font-bold text-white mb-2 font-rudaw">Marketing Platform</h3>
+                            <p class="text-gray-400 text-sm mb-4">A complete and fully responsive e-commerce solution developed for Netherton Shopping Store (Vape Land). The website features a modern and clean UI design, well-organized product categories, dynamic product management, and smooth navigation to help users easily browse. It also includes optimized performance, mobile-first responsiveness, and cross-browser compatibility to ensure seamless usability across all devices and platforms. The project demonstrates strong full-stack development skills, attention to detail, and the ability to build scalable, real-world commercial web applications.</p>
+                            <div class="flex flex-wrap gap-2 mb-6 font-mono">
+                                <span class="text-xs px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">Responsive</span>
+                                <span class="text-xs px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">Secure</span>
+                                <span class="text-xs px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">E-Commerce</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <a href="https://netherton-shopping.store/" class="text-white hover:text-secondary transition-colors text-sm font-semibold flex items-center gap-2">
+                                    Live Demo <i class="fas fa-external-link-alt text-xs"></i>
+                                </a>
+                              
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Card 3 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_30px_rgba(0,255,157,0.2)] transition-all duration-500 gsap-reveal">
+                        <div class="h-48 bg-gray-900 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-80 z-10"></div>
+                            <img src="currencyy.png" alt="Project 3" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 relative z-20">
+                            <h3 class="text-xl font-bold text-white mb-2 font-rudaw">Currency Exchanger</h3>
+                            <p class="text-gray-400 text-sm mb-4"> developed a powerful Currency Exchanger Platform designed to simplify and automate the daily operations of exchange offices. The system efficiently manages salary accounting, transaction processing, and historical tracking of currency rate changes.
+                            It supports 50+ global currencies, features advanced security measures, and includes a flexible administration panel for user and permission management. With its clean interface and optimized performance, the platform delivers a fast, secure, and highly reliable financial management experience..</p>
+                           <br> <div class="flex flex-wrap gap-2 mb-6 font-mono">
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Secure</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Accounting</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Permission</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-white hover:text-secondary transition-colors text-sm font-semibold flex items-center gap-2">
+                                    Private <i class="fas fa-lock text-xs"></i>
+                                </p>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+                           <!-- Project Card 4 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_30px_rgba(0,255,157,0.2)] transition-all duration-500 gsap-reveal">
+                        <div class="h-48 bg-gray-900 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-80 z-10"></div>
+                            <!-- Replace src with your project image -->
+                            <img src="lawa.png" alt="Project 4" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 relative z-20">
+                            <h3 class="text-xl font-bold text-white mb-2 font-rudaw">E-Commerce Platform</h3>
+                            <p class="text-gray-400 text-sm mb-4">developed a unique Silver Jewelry Store Website based on an original concept not previously available in Kurdistan. The platform securely stores customer work records, including names, phone numbers, images, and videos, enabling efficient tracking of custom orders.
+                            It includes a hidden admin panel for private management, while customers only see selected featured products and a contact page. The system emphasizes privacy, simplicity, and security, delivering a modern and efficient business solution.</p>
+                            <div class="flex flex-wrap gap-2 mb-6 font-mono">
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Secure</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Unique</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Hidden Admin Pnael</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">E-Commerce</span>
+                                
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p  class="text-white hover:text-secondary transition-colors text-sm font-semibold flex items-center gap-2">
+                                    Private <i class="fas fa-lock text-xs"></i>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                       <!-- Project Card 5 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_30px_rgba(37,99,235,0.2)] transition-all duration-500 gsap-reveal">
+                        <div class="h-48 bg-gray-900 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-80 z-10"></div>
+                            <img src="certificate.png" alt="Project 5" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 relative z-20">
+                            <h3 class="text-xl font-bold text-white mb-2 font-rudaw">Auto Generate certificate</h3>
+                            <p class="text-gray-400 text-sm mb-4">During my internship at RTVI, I designed and developed a secure Certificate Automation System to streamline the process of generating and distributing attendance and panelist certificates.
+                                The platform automatically generates personalized certificates, allows administrators to review and approve requests, and securely delivers certificates to recipients via email. The system ensures high security, data integrity, and efficient workflow management, significantly reducing manual effort and processing time.</p>
+                           <br> <div class="flex flex-wrap gap-2 mb-6 font-mono">
+                                <span class="text-xs px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">Responsive</span>
+                                <span class="text-xs px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">Secure</span>
+                                <span class="text-xs px-2 py-1 rounded bg-secondary/10 text-secondary border border-secondary/20">High Performance</span>
+                            </div><br>
+                            <div class="flex justify-between items-center">
+                                <a href="https://netherton-shopping.store/" class="text-white hover:text-secondary transition-colors text-sm font-semibold flex items-center gap-2">
+                                    Private <i class="fas fa-lock text-xs"></i>
+                                </a>
+                              
+                            </div>
+                        </div>
+                    </div>
+
+
+                              <!-- Project Card 6 -->
+                    <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-[0_0_30px_rgba(0,255,157,0.2)] transition-all duration-500 gsap-reveal">
+                        <div class="h-48 bg-gray-900 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent opacity-80 z-10"></div>
+                            <img src="flower store .png" alt="Project 3" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        <div class="p-6 relative z-20">
+                            <h3 class="text-xl font-bold text-white mb-2 font-rudaw">Flower store</h3>
+                            <p class="text-gray-400 text-sm mb-4">designed and developed a modern E-commerce Website for a Flower Store, focused on delivering a smooth, user-friendly shopping experience combined with a powerful and secure backend system.
+                                The platform features a hidden high-security admin panel for efficient product management and content posting, allowing store owners to easily update and organize their inventory. Customers can search products effortlessly and place custom requests with a single click via WhatsApp, enabling fast and direct communication with the store.
+                           <br> <div class="flex flex-wrap gap-2 mb-6 font-mono">
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Secure</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">E-commerce</span>
+                                <span class="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">Easy for Update</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-white hover:text-secondary transition-colors text-sm font-semibold flex items-center gap-2">
+                                    Private <i class="fas fa-lock text-xs"></i>
+                                </p>
+                               
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -z-10"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
+
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-12 gsap-reveal">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6 font-rudaw">Let's Work <span class="gradient-text">Together</span></h2>
+                    <p class="text-gray-300 max-w-xl mx-auto text-lg leading-relaxed">
+                        Have a project in mind or just want to say hi? I'm always open to discussing new projects, creative ideas, or opportunities.
+                    </p>
+                </div>
+
+                <div class="flex flex-col gap-6 max-w-2xl mx-auto">
+                    <!-- LinkedIn Card -->
+                    <a href="https://linkedin.com/in/dearysleman" target="_blank" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-6 group hover:bg-white/5 border border-white/5 hover:border-[#0077b5]/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
+                        <div class="w-16 h-16 rounded-xl bg-[#0077b5]/10 flex items-center justify-center group-hover:bg-[#0077b5] transition-all duration-300 shrink-0">
+                            <i class="fab fa-linkedin-in text-2xl text-[#0077b5] group-hover:text-white transition-colors"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-sm font-mono text-gray-400 mb-1">LinkedIn</h3>
+                            <p class="text-lg md:text-xl font-bold text-white group-hover:text-[#0077b5] transition-colors">Deary Sleman</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#0077b5] group-hover:bg-[#0077b5]/10 transition-all">
+                            <i class="fas fa-arrow-right text-gray-500 group-hover:text-[#0077b5] -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
+                        </div>
+                    </a>
+
+                    <!-- WhatsApp Card -->
+                    <a href="https://wa.me/9647708473777" target="_blank" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-6 group hover:bg-white/5 border border-white/5 hover:border-[#25D366]/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
+                        <div class="w-16 h-16 rounded-xl bg-[#25D366]/10 flex items-center justify-center group-hover:bg-[#25D366] transition-all duration-300 shrink-0">
+                            <i class="fab fa-whatsapp text-2xl text-[#25D366] group-hover:text-white transition-colors"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-sm font-mono text-gray-400 mb-1">WhatsApp</h3>
+                            <p class="text-lg md:text-xl font-bold text-white group-hover:text-[#25D366] transition-colors tracking-wide">+964 770 847 3777</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#25D366] group-hover:bg-[#25D366]/10 transition-all">
+                            <i class="fas fa-arrow-right text-gray-500 group-hover:text-[#25D366] -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
+                        </div>
+                    </a>
+
+                    <!-- Email Card -->
+                    <a href="mailto:dearysleman384@gmail.com" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-6 group hover:bg-white/5 border border-white/5 hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
+                        <div class="w-16 h-16 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500 transition-all duration-300 shrink-0">
+                            <i class="fas fa-envelope text-2xl text-red-500 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <div class="flex-grow overflow-hidden">
+                            <h3 class="text-sm font-mono text-gray-400 mb-1">Email</h3>
+                            <p class="text-lg md:text-xl font-bold text-white group-hover:text-red-500 transition-colors truncate">dearysleman384@gmail.com</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-red-500 group-hover:bg-red-500/10 transition-all">
+                            <i class="fas fa-arrow-right text-gray-500 group-hover:text-red-500 -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="mt-16 text-center">
+                    <p class="text-gray-500 text-sm mb-4">Or send a quick message directly</p>
+                    <a href="https://wa.me/9647708473777" class="inline-flex items-center gap-3 px-8 py-3 rounded-full border border-white/10 bg-white/5 text-white font-medium hover:bg-white/10 hover:border-primary/50 transition-all duration-300">
+                        <i class="fas fa-paper-plane text-primary"></i> Send a message via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="py-8 text-center text-gray-500 text-sm relative z-10 border-t border-white/5 bg-black/40">
+            <p>&copy; 2025 Deary Sleman. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        // --- 1. Navbar Glass Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-panel');
+            } else {
+                navbar.classList.remove('glass-panel');
+            }
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- 2. GSAP Animations ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Stagger
+        gsap.from(".hero-content > *", {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out"
+        });
+
+        // Section Reveals
+        const revealElements = document.querySelectorAll(".gsap-reveal");
+        revealElements.forEach(element => {
+            gsap.from(element, {
+                scrollTrigger: {
+                    trigger: element,
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+        // --- 3. 3D Background - Floating Code Symbols ---
+        const canvas = document.getElementById('bg-canvas');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x020617, 0.003); // Match bg color
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 50;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Helper: Create texture from character
+        function createTextTexture(text, color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const context = canvas.getContext('2d');
+            
+            context.font = 'bold 48px "Fira Code", monospace';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillStyle = color;
+            context.fillText(text, 32, 32);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        // Define Code Symbols and Colors (Updated to Green, Blue, Cyan)
+        const symbols = ['{', '}', '<', '>', '/', ';', '0', '1'];
+        const colors = ['#00ff9d', '#2563eb', '#00ff9d', '#22d3ee']; // Green, Blue, Green, Cyan
+
+        // Create Particle Group
+        const particlesGroup = new THREE.Group();
+        const particleCount = 200;
+
+        for (let i = 0; i < particleCount; i++) {
+            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            const material = new THREE.SpriteMaterial({
+                map: createTextTexture(symbol, color),
+                transparent: true,
+                opacity: 0.6 + Math.random() * 0.4, // Random opacity
+                blending: THREE.AdditiveBlending
+            });
+
+            const sprite = new THREE.Sprite(material);
+            
+            // Random Position Spread
+            sprite.position.x = (Math.random() - 0.5) * 150;
+            sprite.position.y = (Math.random() - 0.5) * 150;
+            sprite.position.z = (Math.random() - 0.5) * 100;
+            
+            // Random Scale
+            const scale = 1 + Math.random() * 2;
+            sprite.scale.set(scale, scale, 1);
+            
+            // Store random velocity for animation
+            sprite.userData = {
+                velX: (Math.random() - 0.5) * 0.05,
+                velY: (Math.random() - 0.5) * 0.05,
+                velZ: (Math.random() - 0.5) * 0.02
+            };
+
+            particlesGroup.add(sprite);
+        }
+
+        scene.add(particlesGroup);
+
+        // Mouse Interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetRotX = 0;
+        let targetRotY = 0;
+
+        window.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - window.innerWidth / 2) * 0.05;
+            mouseY = (event.clientY - window.innerHeight / 2) * 0.05;
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            const delta = clock.getDelta();
+            
+            // Smooth Rotation
+            targetRotX = mouseX * 0.001;
+            targetRotY = mouseY * 0.001;
+            particlesGroup.rotation.y += 0.0005;
+            particlesGroup.rotation.x += (targetRotY - particlesGroup.rotation.x) * 0.05;
+            particlesGroup.rotation.y += (targetRotX - particlesGroup.rotation.y) * 0.05;
+
+            // Animate Individual Sprites
+            particlesGroup.children.forEach(sprite => {
+                sprite.position.x += sprite.userData.velX;
+                sprite.position.y += sprite.userData.velY;
+                sprite.position.z += sprite.userData.velZ;
+
+                // Reset position if too far
+                if (Math.abs(sprite.position.z) > 60) sprite.position.z *= -0.9;
+                if (Math.abs(sprite.position.y) > 80) sprite.position.y *= -0.9;
+                if (Math.abs(sprite.position.x) > 80) sprite.position.x *= -0.9;
+            });
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
