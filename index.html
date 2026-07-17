@@ -75,6 +75,69 @@
             overflow-x: clip;
         }
 
+        /* 3D Splash Screen */
+        #splash {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: radial-gradient(circle at 50% 40%, #060c1e 0%, #010409 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #splash-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .splash-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 1.5rem;
+        }
+        .splash-name {
+            font-size: clamp(1.6rem, 6vw, 3rem);
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.5rem;
+        }
+        .splash-role {
+            font-family: 'Fira Code', monospace;
+            font-size: clamp(0.7rem, 2.5vw, 0.9rem);
+            color: #00ff9d;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+        .splash-bar-track {
+            width: min(260px, 60vw);
+            height: 3px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .splash-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(to right, #00ff9d, #2563eb);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.6);
+            transition: width 0.25s ease-out;
+        }
+        .splash-percent {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.75rem;
+            letter-spacing: 0.2em;
+        }
+        body.splash-active {
+            overflow: hidden;
+            height: 100vh;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
@@ -300,6 +363,19 @@
     </style>
 </head>
 <body class="antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- 3D Splash Screen -->
+    <div id="splash">
+        <canvas id="splash-canvas"></canvas>
+        <div class="splash-content">
+            <h1 class="splash-name font-rudaw gradient-text">DEARY SLEMAN</h1>
+            <p class="splash-role">&lt;Full Stack Developer/&gt;</p>
+            <div class="splash-bar-track">
+                <div class="splash-bar-fill" id="splash-bar"></div>
+            </div>
+            <p class="splash-percent" id="splash-percent">0%</p>
+        </div>
+    </div>
 
     <!-- 3D Background Container -->
     <canvas id="bg-canvas"></canvas>
@@ -996,14 +1072,158 @@
         // --- 2. GSAP Animations ---
         gsap.registerPlugin(ScrollTrigger);
 
-        // Hero Stagger
-        gsap.from(".hero-content > *", {
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out"
-        });
+        // Hero Stagger (triggered after the splash screen hides)
+        gsap.set(".hero-content > *", { y: 50, opacity: 0 });
+        function startHeroIntro() {
+            gsap.to(".hero-content > *", {
+                y: 0,
+                opacity: 1,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        }
+
+        // --- 3D Splash Screen ---
+        (function () {
+            const splash = document.getElementById('splash');
+            const canvas = document.getElementById('splash-canvas');
+            const barEl = document.getElementById('splash-bar');
+            const percentEl = document.getElementById('splash-percent');
+            document.body.classList.add('splash-active');
+
+            const sScene = new THREE.Scene();
+            const sCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+            sCamera.position.z = 26;
+
+            const sRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            sRenderer.setSize(window.innerWidth, window.innerHeight);
+            sRenderer.setPixelRatio(window.devicePixelRatio);
+
+            // Crisp star texture: sharp pinpoint core, almost no halo
+            function createStarTexture() {
+                const c = document.createElement('canvas');
+                c.width = c.height = 32;
+                const ctx = c.getContext('2d');
+                const g = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+                g.addColorStop(0, 'rgba(255,255,255,1)');
+                g.addColorStop(0.35, 'rgba(255,255,255,1)');
+                g.addColorStop(0.5, 'rgba(255,255,255,0.35)');
+                g.addColorStop(0.65, 'rgba(255,255,255,0)');
+                g.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.fillStyle = g;
+                ctx.fillRect(0, 0, 32, 32);
+                return new THREE.CanvasTexture(c);
+            }
+            const starTexture = createStarTexture();
+
+            // Star field: layers of stars in the night sky
+            function createStarLayer(count, color, size, spread, depth) {
+                const geo = new THREE.BufferGeometry();
+                const pos = new Float32Array(count * 3);
+                for (let i = 0; i < count; i++) {
+                    pos[i * 3] = (Math.random() - 0.5) * spread;
+                    pos[i * 3 + 1] = (Math.random() - 0.5) * spread;
+                    pos[i * 3 + 2] = -Math.random() * depth;
+                }
+                geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                const mat = new THREE.PointsMaterial({
+                    color: color,
+                    size: size,
+                    map: starTexture,
+                    transparent: true,
+                    opacity: 0.9,
+                    depthWrite: false,
+                    blending: THREE.AdditiveBlending
+                });
+                const points = new THREE.Points(geo, mat);
+                points.userData.depth = depth;
+                sScene.add(points);
+                return points;
+            }
+
+            const starLayers = [
+                createStarLayer(1800, 0xffffff, 0.35, 220, 160), // tiny sharp white stars
+                createStarLayer(500, 0xd8e4ff, 0.55, 200, 150),  // slightly brighter cool-white stars
+                createStarLayer(120, 0xfff6e0, 0.8, 180, 140),   // a few brighter warm stars
+                createStarLayer(40, 0xffffff, 1.1, 160, 130)     // rare bright stars
+            ];
+
+            let splashDone = false;
+            let flySpeed = 4;  // gentle drift through the sky
+            const speedRef = { v: flySpeed };
+            const sClock = new THREE.Clock();
+
+            function splashLoop() {
+                if (splashDone) return;
+                const t = sClock.getElapsedTime();
+
+                starLayers.forEach((layer, li) => {
+                    // Fly forward: move stars toward the camera, recycle behind
+                    const posAttr = layer.geometry.attributes.position;
+                    const depth = layer.userData.depth;
+                    for (let i = 0; i < posAttr.count; i++) {
+                        let z = posAttr.getZ(i) + speedRef.v * 0.016 * (0.5 + li * 0.25);
+                        if (z > 20) z = -depth;
+                        posAttr.setZ(i, z);
+                    }
+                    posAttr.needsUpdate = true;
+
+                    // Subtle twinkle
+                    layer.material.opacity = 0.85 + Math.sin(t * (1.2 + li * 0.7) + li * 2) * 0.12;
+                });
+
+                // Very slow sky rotation for realism
+                sScene.rotation.z = t * 0.008;
+
+                sRenderer.render(sScene, sCamera);
+                requestAnimationFrame(splashLoop);
+            }
+            splashLoop();
+
+            window.addEventListener('resize', () => {
+                if (splashDone) return;
+                sCamera.aspect = window.innerWidth / window.innerHeight;
+                sCamera.updateProjectionMatrix();
+                sRenderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Progress: simulated, waits for real page load before reaching 100%
+            let progress = 0;
+            let pageLoaded = document.readyState === 'complete';
+            window.addEventListener('load', () => { pageLoaded = true; });
+
+            const progressTimer = setInterval(() => {
+                const cap = pageLoaded ? 100 : 88;
+                progress = Math.min(cap, progress + 2 + Math.random() * 4);
+                barEl.style.width = progress + '%';
+                percentEl.textContent = Math.floor(progress) + '%';
+
+                if (progress >= 100) {
+                    clearInterval(progressTimer);
+                    hideSplash();
+                }
+            }, 55);
+
+            function hideSplash() {
+                // Warp speed: fly through the stars as the screen fades
+                gsap.to(speedRef, { v: 260, duration: 1.1, ease: "power3.in" });
+                gsap.to('.splash-content', { opacity: 0, y: -30, duration: 0.6, ease: "power2.in" });
+                gsap.to(splash, {
+                    opacity: 0,
+                    duration: 0.9,
+                    delay: 0.35,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        splashDone = true;
+                        splash.style.display = 'none';
+                        document.body.classList.remove('splash-active');
+                        sRenderer.dispose();
+                        startHeroIntro();
+                    }
+                });
+            }
+        })();
 
         // Section Reveals
         const revealElements = document.querySelectorAll(".gsap-reveal");
