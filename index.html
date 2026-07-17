@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/jpg" href="freelancer.png">
     <title>Deary Sleman - Full Stack Developer</title>
     
@@ -57,10 +57,22 @@
     </script>
 
     <style>
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background-color: #020617;
             color: #f1f5f9;
             overflow-x: hidden;
+            width: 100%;
+            position: relative;
+            touch-action: pan-y; /* vertical scroll only: no pinch zoom, no sideways panning */
+        }
+
+        main {
+            overflow-x: clip;
         }
 
         /* Custom Scrollbar */
@@ -105,6 +117,7 @@
         
         .gradient-text {
             background: linear-gradient(to right, #00ff9d, #2563eb, #00ff9d);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-size: 200% auto;
@@ -145,6 +158,127 @@
             width: 100%;
         }
 
+        /* Cyber Grid Overlay (whole page depth) */
+        .cyber-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(37, 99, 235, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+        }
+
+        /* Tech Stack - Floating Playground Arena */
+        .stack-arena {
+            position: relative;
+            height: 480px;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 157, 0.05), transparent 60%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 0 80px rgba(2, 6, 23, 0.8), 0 8px 32px rgba(0, 0, 0, 0.5);
+            perspective: 900px;
+        }
+        .stack-arena::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Small movable language badges */
+        .tech-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            background: rgba(2, 6, 23, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--bc, rgba(255, 255, 255, 0.15));
+            color: #f1f5f9;
+            box-shadow: 0 0 18px var(--bg-glow, rgba(0, 255, 157, 0.12)), inset 0 0 12px rgba(255, 255, 255, 0.03);
+            will-change: transform;
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+        .tech-badge i {
+            font-size: 1rem;
+            color: var(--bc);
+            filter: drop-shadow(0 0 6px var(--bc));
+        }
+        .tech-badge:hover {
+            box-shadow: 0 0 30px var(--bg-glow, rgba(0, 255, 157, 0.35)), inset 0 0 12px rgba(255, 255, 255, 0.06);
+        }
+        .tech-badge.dragging {
+            cursor: grabbing;
+            box-shadow: 0 0 40px var(--bg-glow, rgba(0, 255, 157, 0.5));
+            z-index: 50 !important;
+        }
+        .arena-hint {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            color: rgba(148, 163, 184, 0.5);
+            pointer-events: none;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+        }
+
+        /* Mobile: shrink content width by 30px (header & body stay equal) */
+        @media (max-width: 767px) {
+            html {
+                font-size: 17px; /* static zoom: everything ~6% bigger on mobile */
+            }
+            .max-w-6xl {
+                width: calc(100% - 70px);
+            }
+        }
+
+        /* Small screens (down to 320px) */
+        @media (max-width: 450px) {
+            .stack-arena {
+                height: 380px;
+            }
+            .tech-badge {
+                font-size: 0.7rem;
+                padding: 0.35rem 0.7rem;
+                gap: 0.4rem;
+            }
+            .tech-badge i {
+                font-size: 0.85rem;
+            }
+            .arena-hint {
+                font-size: 0.6rem;
+            }
+            .cyber-grid {
+                background-size: 40px 40px;
+            }
+        }
+
         /* Timeline Connector Line */
         .timeline-line::before {
             content: '';
@@ -169,30 +303,32 @@
 
     <!-- 3D Background Container -->
     <canvas id="bg-canvas"></canvas>
+    <div class="cyber-grid"></div>
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 transition-all duration-300 top-0" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="#" class="font-rudaw text-2xl font-bold gradient-text tracking-wider">
+                    <a href="#" class="font-rudaw text-xl md:text-lg lg:text-2xl font-bold gradient-text tracking-wider whitespace-nowrap">
                         DEARY SLEMAN
                     </a>
                 </div>
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#home" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-                        <a href="#about" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-                        <a href="#skills" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Skills</a>
-                        <a href="#experience" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Experience</a>
-                        <a href="#projects" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Projects</a>
-                        <a href="#contact" class="nav-link text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                    <div class="ml-4 lg:ml-6 flex items-center space-x-0 lg:space-x-2 xl:space-x-5">
+                        <a href="#home" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">Home</a>
+                        <a href="#about" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">About</a>
+                        <a href="#skills" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">Skills</a>
+                        <a href="#stack" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">Tech Stack</a>
+                        <a href="#experience" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">Experience</a>
+                        <a href="#projects" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">Projects</a>
+                        <a href="#contact" class="nav-link whitespace-nowrap text-gray-300 hover:text-white px-2 lg:px-3 py-2 rounded-md text-xs lg:text-sm font-medium transition-colors">Contact</a>
                     </div>
                 </div>
                 <!-- Mobile menu button -->
                 <div class="-mr-2 flex md:hidden">
-                    <button type="button" onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none transition-colors">
+                    <button type="button" onclick="toggleMobileMenu()" aria-label="Toggle menu" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/10 focus:outline-none transition-colors">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -204,6 +340,7 @@
                 <a href="#home" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="#about" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
                 <a href="#skills" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Skills</a>
+                <a href="#stack" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Tech Stack</a>
                 <a href="#experience" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Experience</a>
                 <a href="#projects" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Projects</a>
                 <a href="#contact" onclick="toggleMobileMenu()" class="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a>
@@ -213,20 +350,20 @@
 
     <main>
         <!-- Hero Section -->
-        <section id="home" class="min-h-screen flex items-center justify-center relative pt-20">
+        <section id="home" class="min-h-screen flex items-center justify-center relative pt-20 overflow-hidden">
             <!-- Decorative Glow -->
             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -z-10 animate-pulse-slow"></div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between w-full">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between w-full">
                 <div class="md:w-1/2 text-center md:text-left z-10 hero-content">
                     <div class="inline-block px-4 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
                         &lt;Welcome/&gt;
                     </div>
-                    <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 font-rudaw leading-tight">
+                    <h1 class="text-4xl sm:text-5xl md:text-7xl font-bold text-white mb-6 font-rudaw leading-tight">
                         Hi, I'm <br>
                         <span class="gradient-text text-glow">Deary Sleman</span>
                     </h1>
-                    <h2 class="text-2xl md:text-3xl text-gray-300 mb-8 font-light">
+                    <h2 class="text-xl sm:text-2xl md:text-3xl text-gray-300 mb-8 font-light">
                         Full Stack Developer 
                     </h2>
                     <p class="text-gray-400 text-lg mb-10 max-w-lg mx-auto md:mx-0 leading-relaxed font-mono text-sm md:text-base">
@@ -251,7 +388,7 @@
                 </div>
                 
                 <!-- 3D Placeholder / Hero Image area -->
-                <div class="md:w-1/2 mt-12 md:mt-0 relative h-[400px] flex items-center justify-center perspective-container">
+                <div class="md:w-1/2 mt-12 md:mt-0 relative h-[300px] sm:h-[400px] flex items-center justify-center perspective-container">
                     <div class="glass-card p-6 rounded-2xl w-64 md:w-80 h-auto absolute animate-float border-t border-l border-white/10 bg-black/40">
                         <div class="flex items-center space-x-4 mb-4 border-b border-white/10 pb-4">
                             <div class="flex gap-2">
@@ -280,9 +417,9 @@
         </section>
 
         <!-- About Section -->
-        <section id="about" class="py-20 relative">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="glass-panel rounded-3xl p-8 md:p-12 border border-white/5">
+        <section id="about" class="py-20 relative overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-panel rounded-3xl p-5 sm:p-8 md:p-12 border border-white/5">
                     <div class="grid md:grid-cols-2 gap-12 items-center">
                         <div class="relative group">
                             <div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
@@ -297,7 +434,7 @@
                             </div>
                         </div>
                         <div class="gsap-reveal">
-                            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white font-rudaw">About <span class="text-primary">Me</span></h2>
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-white font-rudaw">About <span class="text-primary">Me</span></h2>
                             <p class="text-gray-300 mb-6 leading-relaxed">
                                 I am a passionate Full Stack Developer with a knack for creating seamless, user-centric web applications. 
                                 My journey in tech is driven by curiosity and a desire to solve complex problems with elegant code.
@@ -334,15 +471,18 @@
             <!-- Background Decoration -->
             <div class="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
             
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16 gsap-reveal">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-rudaw">My <span class="text-secondary">Expertise</span></h2>
+                    <div class="inline-block px-4 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
+                        &lt;Skills/&gt;
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-rudaw">My <span class="text-secondary">Expertise</span></h2>
                     <p class="text-gray-400 max-w-2xl mx-auto">Specialized in building digital solutions from the ground up.</p>
                 </div>
                 
                 <div class="grid md:grid-cols-2 gap-8">
                     <!-- Card 1: Frontend -->
-                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                    <div class="glass-card skill-card p-6 sm:p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
                         <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-code text-2xl text-primary transition-colors"></i>
                         </div>
@@ -353,7 +493,7 @@
                     </div>
 
                     <!-- Card 2: Backend -->
-                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                    <div class="glass-card skill-card p-6 sm:p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
                         <div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-server text-2xl text-secondary transition-colors"></i>
                         </div>
@@ -364,7 +504,7 @@
                     </div>
 
                     <!-- Card 3: Database -->
-                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                    <div class="glass-card skill-card p-6 sm:p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
                         <div class="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-database text-2xl text-blue-400 transition-colors"></i>
                         </div>
@@ -375,7 +515,7 @@
                     </div>
 
                     <!-- Card 4: Research -->
-                    <div class="glass-card skill-card p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
+                    <div class="glass-card skill-card p-6 sm:p-8 rounded-2xl group hover:bg-white/5 cursor-default gsap-reveal">
                         <div class="w-14 h-14 rounded-full bg-yellow-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-file-alt text-2xl text-yellow-400 transition-colors"></i>
                         </div>
@@ -388,19 +528,54 @@
             </div>
         </section>
 
-        <!-- NEW: Professional Experience Section -->
-        <section id="experience" class="py-20 relative">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Tech Stack Section -->
+        <section id="stack" class="py-20 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-1/3 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] -z-10"></div>
+
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16 gsap-reveal">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-rudaw">Professional <span class="text-primary">Experience</span></h2>
+                    <div class="inline-block px-4 py-1 rounded-full border border-secondary/30 bg-secondary/5 text-secondary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
+                        &lt;TechStack/&gt;
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-rudaw">Languages & <span class="gradient-text">Technologies</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">The tools and languages I use to build fast, secure, and scalable projects.</p>
+                </div>
+
+                <!-- Interactive Floating Badge Arena -->
+                <div class="stack-arena gsap-reveal" id="stack-arena">
+                    <span class="tech-badge" style="--bc:#8993e8; --bg-glow:rgba(137,147,232,0.25);"><i class="fab fa-php"></i> PHP</span>
+                    <span class="tech-badge" style="--bc:#FF2D20; --bg-glow:rgba(255,45,32,0.25);"><i class="fab fa-laravel"></i> Laravel</span>
+                    <span class="tech-badge" style="--bc:#E34F26; --bg-glow:rgba(227,79,38,0.25);"><i class="fab fa-html5"></i> HTML5</span>
+                    <span class="tech-badge" style="--bc:#33A9DC; --bg-glow:rgba(51,169,220,0.25);"><i class="fab fa-css3-alt"></i> CSS3</span>
+                    <span class="tech-badge" style="--bc:#F7DF1E; --bg-glow:rgba(247,223,30,0.25);"><i class="fab fa-js"></i> JavaScript</span>
+                    <span class="tech-badge" style="--bc:#38BDF8; --bg-glow:rgba(56,189,248,0.25);"><i class="fas fa-wind"></i> Tailwind CSS</span>
+                    <span class="tech-badge" style="--bc:#5b9bd5; --bg-glow:rgba(91,155,213,0.25);"><i class="fas fa-database"></i> MySQL</span>
+                    <span class="tech-badge" style="--bc:#6ba3d0; --bg-glow:rgba(107,163,208,0.25);"><i class="fas fa-server"></i> PostgreSQL</span>
+                    <span class="tech-badge" style="--bc:#00ff9d; --bg-glow:rgba(0,255,157,0.25);"><i class="fas fa-code"></i> Full Stack</span>
+
+                    <div class="arena-hint"><i class="fas fa-hand-pointer"></i> drag & throw the badges</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Professional Experience Section -->
+        <section id="experience" class="py-20 relative overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 gsap-reveal">
+                    <div class="inline-block px-4 py-1 rounded-full border border-secondary/30 bg-secondary/5 text-secondary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
+                        &lt;Experience/&gt;
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-rudaw">Professional <span class="text-primary">Experience</span></h2>
                     <p class="text-gray-400">My professional journey and career milestones.</p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-8">
                     <!-- Item 1: Internship -->
-                    <div class="glass-card p-8 rounded-2xl relative border border-white/5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col gsap-reveal">
+                    <div class="glass-card p-6 sm:p-8 rounded-2xl relative border border-white/5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col gsap-reveal">
                         <!-- Date Badge -->
-                        <span class="absolute top-0 right-0 px-4 py-2 bg-primary/10 text-primary border-b border-l border-primary/20 rounded-bl-xl rounded-tr-xl font-mono text-sm font-bold">2025</span>
+                        <span class="static sm:absolute self-start mb-4 sm:mb-0 top-0 right-0 px-4 py-2 bg-primary/10 text-primary border border-primary/20 sm:border-0 sm:border-b sm:border-l rounded-xl sm:rounded-none sm:rounded-bl-xl sm:rounded-tr-xl font-mono text-xs sm:text-sm font-bold">2025</span>
                         
                         <h3 class="text-2xl font-bold text-white mb-2 font-rudaw">Internship</h3>
                         <h4 class="text-secondary font-mono text-sm mb-6 flex items-center gap-2">
@@ -432,9 +607,9 @@
                     </div>
 
                     <!-- Item 2: Freelance -->
-                    <div class="glass-card p-8 rounded-2xl relative border border-white/5 hover:border-secondary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col gsap-reveal">
+                    <div class="glass-card p-6 sm:p-8 rounded-2xl relative border border-white/5 hover:border-secondary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col gsap-reveal">
                         <!-- Date Badge -->
-                        <span class="absolute top-0 right-0 px-4 py-2 bg-secondary/10 text-secondary border-b border-l border-secondary/20 rounded-bl-xl rounded-tr-xl font-mono text-sm font-bold">2025 - Present</span>
+                        <span class="static sm:absolute self-start mb-4 sm:mb-0 top-0 right-0 px-4 py-2 bg-secondary/10 text-secondary border border-secondary/20 sm:border-0 sm:border-b sm:border-l rounded-xl sm:rounded-none sm:rounded-bl-xl sm:rounded-tr-xl font-mono text-xs sm:text-sm font-bold">2025 - Present</span>
                         
                         <h3 class="text-2xl font-bold text-white mb-2 font-rudaw">Full Stack Web Developer</h3>
                         <h4 class="text-secondary font-mono text-sm mb-6 flex items-center gap-2">
@@ -447,9 +622,9 @@
                     </div>
 
                     <!-- Item 3: Content Specialist (Centered) -->
-                    <div class="glass-card p-8 rounded-2xl relative border border-white/5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col md:col-span-2 md:w-2/3 md:mx-auto gsap-reveal">
+                    <div class="glass-card p-6 sm:p-8 rounded-2xl relative border border-white/5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-2 h-full flex flex-col md:col-span-2 md:w-2/3 md:mx-auto gsap-reveal">
                         <!-- Date Badge -->
-                        <span class="absolute top-0 right-0 px-4 py-2 bg-primary/10 text-primary border-b border-l border-primary/20 rounded-bl-xl rounded-tr-xl font-mono text-sm font-bold">2025 - 2026</span>
+                        <span class="static sm:absolute self-start mb-4 sm:mb-0 top-0 right-0 px-4 py-2 bg-primary/10 text-primary border border-primary/20 sm:border-0 sm:border-b sm:border-l rounded-xl sm:rounded-none sm:rounded-bl-xl sm:rounded-tr-xl font-mono text-xs sm:text-sm font-bold">2025 - 2026</span>
                         
                         <h3 class="text-2xl font-bold text-white mb-2 font-rudaw">Digital Content Specialist</h3>
                         <h4 class="text-secondary font-mono text-sm mb-6 flex items-center gap-2">
@@ -488,10 +663,13 @@
         </section>
 
         <!-- Projects Section -->
-        <section id="projects" class="py-20 relative">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="projects" class="py-20 relative overflow-hidden">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16 gsap-reveal">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4 font-rudaw">Featured <span class="text-primary">Projects</span></h2>
+                    <div class="inline-block px-4 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
+                        &lt;Projects/&gt;
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 font-rudaw">Featured <span class="text-primary">Projects</span></h2>
                     <p class="text-gray-400">A selection of my recent work.</p>
                 </div>
 
@@ -714,9 +892,12 @@
             <div class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] -z-10"></div>
             <div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] -z-10"></div>
 
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="text-center mb-12 gsap-reveal">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-6 font-rudaw">Let's Work <span class="gradient-text">Together</span></h2>
+                    <div class="inline-block px-4 py-1 rounded-full border border-secondary/30 bg-secondary/5 text-secondary text-sm font-mono font-semibold mb-4 backdrop-blur-sm">
+                        &lt;Contact/&gt;
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 font-rudaw">Let's Work <span class="gradient-text">Together</span></h2>
                     <p class="text-gray-300 max-w-xl mx-auto text-lg leading-relaxed">
                         Have a project in mind or just want to say hi? I'm always open to discussing new projects, creative ideas, or opportunities.
                     </p>
@@ -724,43 +905,43 @@
 
                 <div class="flex flex-col gap-6 max-w-2xl mx-auto">
                     <!-- LinkedIn Card -->
-                    <a href="https://linkedin.com/in/dearysleman" target="_blank" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-6 group hover:bg-white/5 border border-white/5 hover:border-[#0077b5]/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
-                        <div class="w-16 h-16 rounded-xl bg-[#0077b5]/10 flex items-center justify-center group-hover:bg-[#0077b5] transition-all duration-300 shrink-0">
-                            <i class="fab fa-linkedin-in text-2xl text-[#0077b5] group-hover:text-white transition-colors"></i>
+                    <a href="https://linkedin.com/in/dearysleman" target="_blank" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-3 sm:gap-6 group hover:bg-white/5 border border-white/5 hover:border-[#0077b5]/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-[#0077b5]/10 flex items-center justify-center group-hover:bg-[#0077b5] transition-all duration-300 shrink-0">
+                            <i class="fab fa-linkedin-in text-xl sm:text-2xl text-[#0077b5] group-hover:text-white transition-colors"></i>
                         </div>
                         <div class="flex-grow">
                             <h3 class="text-sm font-mono text-gray-400 mb-1">LinkedIn</h3>
-                            <p class="text-lg md:text-xl font-bold text-white group-hover:text-[#0077b5] transition-colors">Deary Sleman</p>
+                            <p class="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-[#0077b5] transition-colors">Deary Sleman</p>
                         </div>
-                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#0077b5] group-hover:bg-[#0077b5]/10 transition-all">
+                        <div class="hidden sm:flex w-10 h-10 rounded-full border border-white/10 items-center justify-center group-hover:border-[#0077b5] group-hover:bg-[#0077b5]/10 transition-all">
                             <i class="fas fa-arrow-right text-gray-500 group-hover:text-[#0077b5] -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
                         </div>
                     </a>
 
                     <!-- WhatsApp Card -->
-                    <a href="https://wa.me/9647708473777" target="_blank" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-6 group hover:bg-white/5 border border-white/5 hover:border-[#25D366]/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
-                        <div class="w-16 h-16 rounded-xl bg-[#25D366]/10 flex items-center justify-center group-hover:bg-[#25D366] transition-all duration-300 shrink-0">
-                            <i class="fab fa-whatsapp text-2xl text-[#25D366] group-hover:text-white transition-colors"></i>
+                    <a href="https://wa.me/9647708473777" target="_blank" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-3 sm:gap-6 group hover:bg-white/5 border border-white/5 hover:border-[#25D366]/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-[#25D366]/10 flex items-center justify-center group-hover:bg-[#25D366] transition-all duration-300 shrink-0">
+                            <i class="fab fa-whatsapp text-xl sm:text-2xl text-[#25D366] group-hover:text-white transition-colors"></i>
                         </div>
                         <div class="flex-grow">
                             <h3 class="text-sm font-mono text-gray-400 mb-1">WhatsApp</h3>
-                            <p class="text-lg md:text-xl font-bold text-white group-hover:text-[#25D366] transition-colors tracking-wide">+964 770 847 3777</p>
+                            <p class="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-[#25D366] transition-colors tracking-wide">+964 770 847 3777</p>
                         </div>
-                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#25D366] group-hover:bg-[#25D366]/10 transition-all">
+                        <div class="hidden sm:flex w-10 h-10 rounded-full border border-white/10 items-center justify-center group-hover:border-[#25D366] group-hover:bg-[#25D366]/10 transition-all">
                             <i class="fas fa-arrow-right text-gray-500 group-hover:text-[#25D366] -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
                         </div>
                     </a>
 
                     <!-- Email Card -->
-                    <a href="mailto:dearysleman384@gmail.com" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-6 group hover:bg-white/5 border border-white/5 hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
-                        <div class="w-16 h-16 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500 transition-all duration-300 shrink-0">
-                            <i class="fas fa-envelope text-2xl text-red-500 group-hover:text-white transition-colors"></i>
+                    <a href="mailto:dearysleman384@gmail.com" class="glass-card p-4 md:p-6 rounded-2xl flex items-center gap-3 sm:gap-6 group hover:bg-white/5 border border-white/5 hover:border-red-500/50 transition-all duration-300 hover:-translate-y-1 gsap-reveal">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500 transition-all duration-300 shrink-0">
+                            <i class="fas fa-envelope text-xl sm:text-2xl text-red-500 group-hover:text-white transition-colors"></i>
                         </div>
                         <div class="flex-grow overflow-hidden">
                             <h3 class="text-sm font-mono text-gray-400 mb-1">Email</h3>
-                            <p class="text-lg md:text-xl font-bold text-white group-hover:text-red-500 transition-colors truncate">dearysleman384@gmail.com</p>
+                            <p class="text-base sm:text-lg md:text-xl font-bold text-white group-hover:text-red-500 transition-colors truncate">dearysleman384@gmail.com</p>
                         </div>
-                        <div class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-red-500 group-hover:bg-red-500/10 transition-all">
+                        <div class="hidden sm:flex w-10 h-10 rounded-full border border-white/10 items-center justify-center group-hover:border-red-500 group-hover:bg-red-500/10 transition-all">
                             <i class="fas fa-arrow-right text-gray-500 group-hover:text-red-500 -rotate-45 group-hover:rotate-0 transition-all duration-300"></i>
                         </div>
                     </a>
@@ -802,6 +983,16 @@
             menu.classList.toggle('hidden');
         }
 
+        // --- Disable Zoom (iOS Safari ignores user-scalable=no) ---
+        document.addEventListener('gesturestart', e => e.preventDefault());
+        document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', e => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault(); // block double-tap zoom
+            lastTouchEnd = now;
+        }, { passive: false });
+
         // --- 2. GSAP Animations ---
         gsap.registerPlugin(ScrollTrigger);
 
@@ -829,6 +1020,149 @@
                 ease: "power3.out"
             });
         });
+
+        // --- Tech Stack: Floating / Draggable Badge Physics ---
+        (function () {
+            const arena = document.getElementById('stack-arena');
+            if (!arena) return;
+
+            const badges = Array.from(arena.querySelectorAll('.tech-badge'));
+            const bodies = [];
+            let arenaW = arena.clientWidth;
+            let arenaH = arena.clientHeight;
+
+            badges.forEach((el, i) => {
+                const w = el.offsetWidth;
+                const h = el.offsetHeight;
+                bodies.push({
+                    el, w, h,
+                    x: Math.random() * (arenaW - w - 20) + 10,
+                    y: Math.random() * (arenaH - h - 60) + 10,
+                    vx: (Math.random() - 0.5) * 1.2,
+                    vy: (Math.random() - 0.5) * 1.2,
+                    dragging: false
+                });
+                el.style.zIndex = i + 1;
+            });
+
+            let dragged = null;
+            let pointerX = 0, pointerY = 0, prevX = 0, prevY = 0;
+
+            function getPoint(e) {
+                const rect = arena.getBoundingClientRect();
+                const src = e.touches ? e.touches[0] : e;
+                return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+            }
+
+            function startDrag(e, body) {
+                dragged = body;
+                body.dragging = true;
+                body.el.classList.add('dragging');
+                const p = getPoint(e);
+                pointerX = prevX = p.x;
+                pointerY = prevY = p.y;
+                body.grabDX = p.x - body.x;
+                body.grabDY = p.y - body.y;
+                e.preventDefault();
+            }
+
+            bodies.forEach(body => {
+                body.el.addEventListener('mousedown', e => startDrag(e, body));
+                body.el.addEventListener('touchstart', e => startDrag(e, body), { passive: false });
+            });
+
+            function moveDrag(e) {
+                if (!dragged) return;
+                const p = getPoint(e);
+                pointerX = p.x;
+                pointerY = p.y;
+                if (e.touches) e.preventDefault();
+            }
+
+            function endDrag() {
+                if (!dragged) return;
+                // Throw velocity from recent pointer movement
+                dragged.vx = (pointerX - prevX) * 0.4;
+                dragged.vy = (pointerY - prevY) * 0.4;
+                dragged.dragging = false;
+                dragged.el.classList.remove('dragging');
+                dragged = null;
+            }
+
+            window.addEventListener('mousemove', moveDrag);
+            window.addEventListener('touchmove', moveDrag, { passive: false });
+            window.addEventListener('mouseup', endDrag);
+            window.addEventListener('touchend', endDrag);
+
+            window.addEventListener('resize', () => {
+                arenaW = arena.clientWidth;
+                arenaH = arena.clientHeight;
+                bodies.forEach(b => {
+                    b.w = b.el.offsetWidth;
+                    b.h = b.el.offsetHeight;
+                    b.x = Math.min(b.x, Math.max(0, arenaW - b.w));
+                    b.y = Math.min(b.y, Math.max(0, arenaH - b.h));
+                });
+            });
+
+            function step() {
+                bodies.forEach(b => {
+                    if (b.dragging) {
+                        prevX += (pointerX - prevX) * 0.5;
+                        prevY += (pointerY - prevY) * 0.5;
+                        b.x = pointerX - b.grabDX;
+                        b.y = pointerY - b.grabDY;
+                    } else {
+                        b.x += b.vx;
+                        b.y += b.vy;
+                        // Gentle friction, but keep a minimum drift so they never stop
+                        b.vx *= 0.995;
+                        b.vy *= 0.995;
+                        const speed = Math.hypot(b.vx, b.vy);
+                        if (speed < 0.3) {
+                            const angle = Math.atan2(b.vy, b.vx) || Math.random() * Math.PI * 2;
+                            b.vx = Math.cos(angle) * 0.3;
+                            b.vy = Math.sin(angle) * 0.3;
+                        }
+                    }
+
+                    // Wall bounce
+                    if (b.x < 0) { b.x = 0; b.vx = Math.abs(b.vx); }
+                    if (b.x + b.w > arenaW) { b.x = arenaW - b.w; b.vx = -Math.abs(b.vx); }
+                    if (b.y < 0) { b.y = 0; b.vy = Math.abs(b.vy); }
+                    if (b.y + b.h > arenaH) { b.y = arenaH - b.h; b.vy = -Math.abs(b.vy); }
+                });
+
+                // Simple badge-vs-badge repulsion (circle approximation)
+                for (let i = 0; i < bodies.length; i++) {
+                    for (let j = i + 1; j < bodies.length; j++) {
+                        const a = bodies[i], c = bodies[j];
+                        const ax = a.x + a.w / 2, ay = a.y + a.h / 2;
+                        const cx = c.x + c.w / 2, cy = c.y + c.h / 2;
+                        const dx = cx - ax, dy = cy - ay;
+                        const dist = Math.hypot(dx, dy) || 1;
+                        const minDist = (a.w + c.w) / 4 + 14;
+                        if (dist < minDist) {
+                            const push = (minDist - dist) * 0.04;
+                            const nx = dx / dist, ny = dy / dist;
+                            if (!a.dragging) { a.vx -= nx * push; a.vy -= ny * push; }
+                            if (!c.dragging) { c.vx += nx * push; c.vy += ny * push; }
+                        }
+                    }
+                }
+
+                // Render: position + subtle 3D tilt based on velocity
+                bodies.forEach(b => {
+                    const tiltY = Math.max(-20, Math.min(20, b.vx * 4));
+                    const tiltX = Math.max(-20, Math.min(20, -b.vy * 4));
+                    b.el.style.transform = `translate(${b.x}px, ${b.y}px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
+                });
+
+                requestAnimationFrame(step);
+            }
+
+            step();
+        })();
 
         // --- 3. 3D Background - Floating Code Symbols ---
         const canvas = document.getElementById('bg-canvas');
@@ -902,6 +1236,39 @@
 
         scene.add(particlesGroup);
 
+        // --- 3D Wireframe Geometric Shapes ---
+        const shapesGroup = new THREE.Group();
+
+        function createWireShape(geometry, color, position, scale) {
+            const material = new THREE.MeshBasicMaterial({
+                color: color,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.35
+            });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(...position);
+            mesh.scale.setScalar(scale);
+            mesh.userData = {
+                rotSpeedX: (Math.random() - 0.5) * 0.008,
+                rotSpeedY: (Math.random() - 0.5) * 0.008,
+                floatOffset: Math.random() * Math.PI * 2,
+                floatSpeed: 0.3 + Math.random() * 0.4,
+                baseY: position[1]
+            };
+            shapesGroup.add(mesh);
+            return mesh;
+        }
+
+        createWireShape(new THREE.TorusKnotGeometry(8, 2.2, 100, 16), 0x00ff9d, [45, 15, -30], 1);
+        createWireShape(new THREE.IcosahedronGeometry(9, 0), 0x2563eb, [-50, -10, -25], 1);
+        createWireShape(new THREE.OctahedronGeometry(7, 0), 0x22d3ee, [-35, 30, -40], 1);
+        createWireShape(new THREE.TorusGeometry(6, 1.8, 12, 40), 0x00ff9d, [40, -25, -35], 1);
+        createWireShape(new THREE.DodecahedronGeometry(5, 0), 0x2563eb, [0, 40, -50], 1);
+        createWireShape(new THREE.TetrahedronGeometry(6, 0), 0x22d3ee, [15, -40, -45], 1);
+
+        scene.add(shapesGroup);
+
         // Mouse Interaction
         let mouseX = 0;
         let mouseY = 0;
@@ -913,10 +1280,17 @@
             mouseY = (event.clientY - window.innerHeight / 2) * 0.05;
         });
 
+        // Scroll Parallax - camera drifts as you scroll
+        let scrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            scrollY = window.scrollY;
+        });
+
         const clock = new THREE.Clock();
 
         function animate() {
             const delta = clock.getDelta();
+            const elapsed = clock.getElapsedTime();
             
             // Smooth Rotation
             targetRotX = mouseX * 0.001;
@@ -936,6 +1310,20 @@
                 if (Math.abs(sprite.position.y) > 80) sprite.position.y *= -0.9;
                 if (Math.abs(sprite.position.x) > 80) sprite.position.x *= -0.9;
             });
+
+            // Animate Wireframe Shapes (spin + gentle float)
+            shapesGroup.children.forEach(mesh => {
+                mesh.rotation.x += mesh.userData.rotSpeedX;
+                mesh.rotation.y += mesh.userData.rotSpeedY;
+                mesh.position.y = mesh.userData.baseY + Math.sin(elapsed * mesh.userData.floatSpeed + mesh.userData.floatOffset) * 4;
+            });
+            shapesGroup.rotation.y += (targetRotX * 0.5 - shapesGroup.rotation.y) * 0.03;
+            shapesGroup.rotation.x += (targetRotY * 0.5 - shapesGroup.rotation.x) * 0.03;
+
+            // Scroll parallax: subtle camera dive as user scrolls
+            const targetCamY = -scrollY * 0.01;
+            camera.position.y += (targetCamY - camera.position.y) * 0.05;
+            camera.position.z = 50 + Math.sin(scrollY * 0.0005) * 5;
 
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
